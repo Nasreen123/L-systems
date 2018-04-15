@@ -1,10 +1,40 @@
-F = 25;
+F = 15;
 A = 45;
+input_string = "F[F+F-F]F";
 stack = [];
 instructions = [];
+_x = 550;
+_y = 550;
+window.onload=function(){
+  document.body.addEventListener('click', function (event) {
+    _x = event.pageX;
+    _y = event.pageY;
+    console.log(_x + " " + _y);
+    onUserInput();
+  });
+}
+
+
+
+function onUserInput() {
+  console.log("In onuserinput");
+  F = document.getElementById("length").value;
+  A = document.getElementById("angle").value;
+  input_string = document.getElementById("rule").value;
+  console.log("user input, values : " + F + A + input_string);
+
+  tokens = parse(input_string);
+  tokens = apply_pattern(tokens);
+  tokens = apply_pattern(tokens);
+
+  interpret(tokens);
+  redraw();
+}
+
 
 function parse(input_string) {
   var tokens = input_string.split("");
+  console.log("tokens: " + tokens);
   return tokens;
 }
 function interpret(tokens) {
@@ -17,38 +47,31 @@ function interpret(tokens) {
 }
 
 function setup() {
-  //test();
-  // setFrameRate(0.1);
-  createCanvas(500, 500);
-  input_string = "F[+F][-F][--F]+F";
+  //createCanvas(windowWidth, windowHeight);
+  createCanvas(700, 700);
+  angleMode(DEGREES);
+  //input_string = "F[+F][-F][--F]+F";
   //"F[+F][++F][-F][--F]F";
   tokens = parse(input_string);
   tokens = apply_pattern(tokens);
   tokens = apply_pattern(tokens);
-  tokens = apply_pattern(tokens);
 
-
-  // tokens = apply_pattern(tokens);
-  // tokens = apply_pattern(tokens);
-  console.log("tokens: " + tokens);
   interpret(tokens);
+
+  noLoop();
 }
 
 function draw() {
-  background(200);
-  angleMode(DEGREES);
-
-  var x = 200;
-  var y = 200;
+  background("#e3dddc");
+//background(200);
+  var x = _x;
+  var y = _y;
   var angle = 180;
 
   for (let i = 0; i <instructions.length; i++) {
-    console.log("executing instructions, " + instructions[i] + " " + x + " " + y + " " + angle)
     if (angle == undefined) {
-      console.log("angle undefined");
     }
     [x, y, angle] = instructions[i](x, y, angle);
-    //console.log("EXECUTED " + instructions[i] + " " + x + " " + y + " " + angle);
   }
 }
 
@@ -64,8 +87,6 @@ function apply_pattern(tokens) {
   }
 return result;
 }
-
-
 
 function interpret_token(token) {
   if (token === "F") {
@@ -88,8 +109,8 @@ function interpret_token(token) {
 function draw_line(x, y, angle) {
   var new_x = get_new_x(x, angle);
   var new_y = get_new_y(y, angle);
+    console.log("F draw line from: " + x + " " + y + " to " + new_x  + " " + new_y);
   line(x, y, new_x, new_y);
-  //console.log("printing new line from: " + x + y + " to " + new_x + new_y + " angle: " + angle);
   return [new_x, new_y, angle];
 }
 
@@ -105,18 +126,18 @@ function get_new_y(y, angle) {
 
 function plus_rotate(x, y, angle) {
   var new_angle = angle + A;
-  console.log("new angle is: " + new_angle);
+    console.log("+ plus rot, old: " + angle + " new: " + new_angle);
   return [x, y, new_angle];
 }
 
 function minus_rotate(x, y, angle) {
-  //console.log("angle is: " + angle);
   var new_angle = angle - A;
-  //console.log("new angle is: " + new_angle);
+  console.log("- minus rot, old: " + angle + " new: " + new_angle);
   return [x, y, new_angle];
 }
 
 function _push(x, y, angle) {
+  console.log("[ pushing vals to stack: " + x + " " + y+ " " + angle)
   stack.push(x);
   stack.push(y);
   stack.push(angle);
@@ -124,21 +145,24 @@ function _push(x, y, angle) {
 }
 
 function _pop(x, y, angle) {
-  if (stack.length < 2) {
-    //console.log("STACK UNDERFLOW!");
+  if (stack.length < 3) {
+    console.log("not enough numbers on stack!");
     return [x, y, angle];
   }
   new_angle = stack.pop();
   new_y = stack.pop();
   new_x = stack.pop();
-
-  //console.log("in pop, old: " + x + y + " new: " + new_x + new_y);
+  console.log("] new vals from stack: " + new_x + " " + new_y+ " " + new_angle)
   return [new_x, new_y, new_angle];
 }
 
 function toRadians(angle) {
   return angle * (Math.PI / 180);
 }
+
+
+
+
 
 function test() {
   var passed = true;

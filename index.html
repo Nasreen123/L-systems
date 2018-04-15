@@ -1,8 +1,29 @@
 <html>
+
   <head>
+    <style>
+      body {
+        background-color: #e3dddc;
+      }
+      div {
+        background: rgba(255, 255, 255, 0.6);
+        padding: 20px;
+        width: 180px;
+        float: right;
+        margin: 30px;
+      }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.js"></script>
     <script src="sketch.js"></script>
   </head>
+
   <body>
+
+    <div>
+      <p> Rule: <input id="rule" value="F[F+F-F]F" onchange="onUserInput()"> </p>
+      <p> Line length: <input id="length" value="15" onchange="onUserInput()"> </p>
+      <p> Angle: <input id="angle" value="45" onchange="onUserInput()"> </p>
+    </div>
   </body>
+
 </html>
